@@ -1,10 +1,10 @@
-local info = function (fmt, ...)
-	vis:info("vis-golang: " .. string.format(fmt, ...))
+local info = function (cmd, fmt, ...)
+	vis:info(string.format("vis-golang: [%s] %s", cmd, string.format(fmt, ...)))
 end
 
 vis:command_register('godef', function (argv, force, win, selection, range)
 	if win.syntax ~= "go" then
-		info("file is not a go file")
+		info("godef", "file is not a go file")
 		return true
 	end
 
@@ -20,7 +20,7 @@ vis:command_register('godef', function (argv, force, win, selection, range)
 	}, command)
 	
 	if status ~= 0 or not output then
-		info("error running godef %s", err)
+		info("godef", "error running godef %s", err)
 		return true
 	end
 
@@ -34,7 +34,7 @@ vis:command_register('godef', function (argv, force, win, selection, range)
 		end
 	end
 
-	info(type_info)
+	info("godef", type_info)
 
 	if force then
 		vis.win.selection:to(line, column)
@@ -45,26 +45,75 @@ end)
 
 vis:command_register('gofmt', function (argv, force, win, selection, range)
 	if win.syntax ~= "go" then
-		info("file is not a go file")
+		info("gofmt", "file is not a go file")
 		return true
 	end
 	
 	local status, output, err = vis:pipe(win.file, range, "gofmt -s")
 	
 	if status ~= 0 or not output then
-		info("error running gofmt -s (%s)", err)
+		info("gofmt", "error running gofmt -s (%s)", err)
 		return true
 	end
 
 	if not win.file:delete(range) then
-		info("couldn't delete range")
+		info("gofmt", "couldn't delete range")
 		return true
 	end
 	
 	if not win.file:insert(range.start, output) then
-		info("couldn't insert formatted content")
+		info("gofmt", "couldn't insert formatted content")
 	end
+
+	info("gofmt", "OK")
 	
+	return true
+end)
+
+vis:command_register('gotest', function (argv, force, win, selection, range)
+	if win.syntax ~= "go" then
+		info("gotest", "file is not a go file")
+		return true
+	end
+
+	local found_at = string.find(win.file.name, "/%a+_test%.go")
+	if found_at == nil then
+		info("gotest", "file is not a test file")
+		return true
+	end
+
+	local package_path = string.format("./%s", string.sub(win.file.name, 1, found_at))
+
+	local command = string.format("go test %s -nocolor", package_path)
+
+	local file = io.popen(command)
+	local output = file:read()
+	local success, msg, status = file:close()
+
+	vis:feedkeys("<vis-redraw>")
+
+	-- something is wrong
+	if status ~= 0 then
+		info("gotest","'%s' (status %d) FAILED", command, status)
+
+		-- tests did not pass
+		if status == 1 then
+			if not vis:command("new") then
+				info("gotest","failed opening empty buffer")
+				return true
+			end
+
+			if not vis.win.file:insert(0, output) then
+				info("gotest", "failed inserting failure report")
+				return true
+			end
+		end
+
+		return true
+	else
+		info("gotest", "%s OK", command)
+	end
+		
 	return true
 end)
 

@@ -12,6 +12,8 @@ If forced (with `!` suffix) it will also open the source file and position the c
 
 The second feature is `gofmt` integration. There's a `gofmt` command that replaces the current range with its formatted version.
 
+The third feature is `go test` integration. A `gotest` command has been added that runs the package tests in the package that the current active file is located in. In case of failure a no-name buffer with the report content will be opened.
+
 ## Installation
 
 First clone the repository into your config folder:
