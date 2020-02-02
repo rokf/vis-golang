@@ -10,6 +10,8 @@ It contains a `godef` command. It displays type information of the symbol at the
 
 If forced (with `!` suffix) it will also open the source file and position the cursor at the definition in a `split` window.
 
+The second feature is `gofmt` integration. There's a `gofmt` command that replaces the current range with its formatted version.
+
 ## Installation
 
 First clone the repository into your config folder:
