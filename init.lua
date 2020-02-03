@@ -82,9 +82,11 @@ vis:command_register('gotest', function (argv, force, win, selection, range)
 		return true
 	end
 
+	local flags = os.getenv("GOTEST_FLAGS") or ""
+
 	local package_path = string.format("./%s", string.sub(win.file.name, 1, found_at))
 
-	local command = string.format("go test %s -nocolor", package_path)
+	local command = string.format("go test %s %s", package_path, flags)
 
 	local file = io.popen(command)
 	local output = file:read()

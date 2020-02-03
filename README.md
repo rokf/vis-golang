@@ -14,6 +14,8 @@ The second feature is `gofmt` integration. There's a `gofmt` command that replac
 
 The third feature is `go test` integration. A `gotest` command has been added that runs the package tests in the package that the current active file is located in. In case of failure a no-name buffer with the report content will be opened.
 
+`gotest` looks for a `GOTEST_FLAGS` environment variable at runtime. If it is present then it appends its content to the end of the `go test` command (useful together with `direnv` for example).
+
 ## Installation
 
 First clone the repository into your config folder:
