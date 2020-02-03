@@ -43,31 +43,44 @@ vis:command_register('godef', function (argv, force, win, selection, range)
 	return true
 end)
 
-vis:command_register('gofmt', function (argv, force, win, selection, range)
+local formatter_f = function (name, cmd, win, range)
 	if win.syntax ~= "go" then
-		info("gofmt", "file is not a go file")
+		info(name, "file is not a go file")
 		return true
 	end
 	
-	local status, output, err = vis:pipe(win.file, range, "gofmt -s")
+	local status, output, err = vis:pipe(win.file, range, cmd)
 	
 	if status ~= 0 or not output then
-		info("gofmt", "error running gofmt -s (%s)", err)
+		info(name, "error running %s (%s)", cmd, err)
 		return true
 	end
 
 	if not win.file:delete(range) then
-		info("gofmt", "couldn't delete range")
+		info(name, "couldn't delete range")
 		return true
 	end
 	
 	if not win.file:insert(range.start, output) then
-		info("gofmt", "couldn't insert formatted content")
+		info(name, "couldn't insert formatted content")
 	end
 
-	info("gofmt", "OK")
+	info(name, "OK")
 	
 	return true
+end
+
+vis:command_register('gofmt', function (argv, force, win, selection, range)
+	return formatter_f("gofmt", "gofmt -s", win, range)
+end)
+
+vis:command_register('goimports', function (argv, force, win, selection, range)
+	local command = "goimports"
+	local local_flag = os.getenv("GOIMPORTS_LOCAL")
+	if local_flag ~= nil and #local_flag ~= 0 then
+		command = command .. " -local " .. local_flag
+	end
+	return formatter_f("goimports", command, win, range)
 end)
 
 vis:command_register('gotest', function (argv, force, win, selection, range)
