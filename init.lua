@@ -102,7 +102,7 @@ vis:command_register('gotest', function (argv, force, win, selection, range)
 	local command = string.format("go test %s %s", package_path, flags)
 
 	local file = io.popen(command)
-	local output = file:read()
+	local output = file:read("*all")
 	local success, msg, status = file:close()
 
 	vis:feedkeys("<vis-redraw>")
@@ -111,17 +111,13 @@ vis:command_register('gotest', function (argv, force, win, selection, range)
 	if status ~= 0 then
 		info("gotest","'%s' (status %d) FAILED", command, status)
 
-		-- tests did not pass
-		if status == 1 then
-			if not vis:command("new") then
-				info("gotest","failed opening empty buffer")
-				return true
-			end
+		if not vis:command("new") then
+			info("gotest","failed opening empty buffer")
+			return true
+		end
 
-			if not vis.win.file:insert(0, output) then
-				info("gotest", "failed inserting failure report")
-				return true
-			end
+		if not vis.win.file:insert(0, output) then
+			info("gotest", "failed inserting failure report")
 		end
 
 		return true
