@@ -135,15 +135,12 @@ vis:command_register('gotest', function (argv, force, win, selection, range)
 
 	local package_path = string.format("./%s", string.sub(win.file.name, 1, found_at))
 
-	local command = string.format("go test %s %s", package_path, flags)
+	local command = string.format("go test %s %s 2>&1", package_path, flags)
 
 	local file = io.popen(command)
 	local output = file:read("*all")
 	local success, msg, status = file:close()
 
-	vis:feedkeys("<vis-redraw>")
-
-	-- something is wrong
 	if status ~= 0 then
 		info("gotest","'%s' (status %d) FAILED", command, status)
 
