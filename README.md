@@ -19,6 +19,8 @@ The third feature is `go test` integration. A `gotest` command has been added th
 
 `gotest` looks for a `GOTEST_FLAGS` environment variable at runtime. If it is present then it appends its content to the end of the `go test` command (useful together with `direnv` for example).
 
+The fourth feature is a `gout` command (go outline). It opens `fzf` with a list of lines containing type or function definitions of the current file. When an entry is chosen the cursor appears on the line of its definition.
+
 ## Installation
 
 First clone the repository into your config folder:
