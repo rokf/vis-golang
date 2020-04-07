@@ -2,9 +2,11 @@ local info = function (cmd, fmt, ...)
 	vis:info(string.format("vis-golang: [%s] %s", cmd, string.format(fmt, ...)))
 end
 
+local err_filetype = "file is not a go file"
+
 vis:command_register('gout', function (argv, force, win, selection, range)
 	if win.syntax ~= "go" then
-		info("gout", "file is not a go file")
+		info("gout", err_filetype)
 		return true
 	end
 
@@ -27,14 +29,14 @@ vis:command_register('gout', function (argv, force, win, selection, range)
 		if line_number ~= nil then
 			selection:to(line_number, 1)
 		end
-	else
-		info("gout", "error running fzf %s")
+	elseif status ~= 130 then -- not exit
+		info("gout", "error running fzf %s", msg)
 	end
 end)
 
 vis:command_register('godef', function (argv, force, win, selection, range)
 	if win.syntax ~= "go" then
-		info("godef", "file is not a go file")
+		info("godef", err_filetype)
 		return true
 	end
 
@@ -75,7 +77,7 @@ end)
 
 local formatter_f = function (name, cmd, win, range, selection)
 	if win.syntax ~= "go" then
-		info(name, "file is not a go file")
+		info(name, err_filetype)
 		return true
 	end
 	
@@ -121,7 +123,7 @@ end)
 
 vis:command_register('gotest', function (argv, force, win, selection, range)
 	if win.syntax ~= "go" then
-		info("gotest", "file is not a go file")
+		info("gotest", err_filetype)
 		return true
 	end
 
