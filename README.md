@@ -10,7 +10,7 @@ It contains a `godef` command. It displays type information of the symbol at the
 
 If forced (with `!` suffix) it will also open the source file and position the cursor at the definition in a `split` window.
 
-The second feature is formatter integration. There are `gofmt` and `goimports` commands that replace the current range with its formatted version.
+The second feature is formatter integration. There are `gofmt` and `goimports` commands that replace the current range with its formatted version. If forced (with `!` suffix) they'll try writing to the file at the end (execute `w`).
 
 - `gofmt` runs with the `-s` (simplify code) flag
 - `goimports` `-local` flag can be set through a `GOIMPORTS_LOCAL` environment variable

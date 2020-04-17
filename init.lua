@@ -75,7 +75,7 @@ vis:command_register('godef', function (argv, force, win, selection, range)
 	return true
 end)
 
-local formatter_f = function (name, cmd, win, range, selection)
+local formatter_f = function (name, cmd, win, range, selection, force)
 	if win.syntax ~= "go" then
 		info(name, err_filetype)
 		return true
@@ -98,6 +98,14 @@ local formatter_f = function (name, cmd, win, range, selection)
 	
 	if not win.file:insert(range.start, output) then
 		info(name, "couldn't insert formatted content")
+		return true
+	end
+
+	if force then
+		if not vis:command("w") then
+			info(name, "couldn't write changes to file")
+			return true
+		end
 	end
 
 	-- approximately restore position
@@ -109,7 +117,7 @@ local formatter_f = function (name, cmd, win, range, selection)
 end
 
 vis:command_register('gofmt', function (argv, force, win, selection, range)
-	return formatter_f("gofmt", "gofmt -s", win, range, selection)
+	return formatter_f("gofmt", "gofmt -s", win, range, selection, force)
 end)
 
 vis:command_register('goimports', function (argv, force, win, selection, range)
@@ -118,7 +126,7 @@ vis:command_register('goimports', function (argv, force, win, selection, range)
 	if local_flag ~= nil and #local_flag ~= 0 then
 		command = command .. " -local " .. local_flag
 	end
-	return formatter_f("goimports", command, win, range, selection)
+	return formatter_f("goimports", command, win, range, selection, force)
 end)
 
 vis:command_register('gotest', function (argv, force, win, selection, range)
