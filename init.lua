@@ -34,6 +34,37 @@ vis:command_register('gout', function (argv, force, win, selection, range)
 	end
 end)
 
+vis:command_register('goswap', function (argv, force, win, selection, range)
+	local whoami = "goswap"
+	
+	if win.syntax ~= "go" then
+		info(whoami, err_filetype)
+		return true
+	end
+
+	local file = win.file
+
+	if file.path == nil then
+		info(whoami, "file is not named")
+		return true
+	end
+
+	local suffix_replacement
+	if string.match(file.name, "_test.go$") then
+		suffix_replacement = string.sub(file.name, 1, -9) .. ".go"
+	else
+		suffix_replacement = string.sub(file.name, 1, -4) .. "_test.go"
+	end
+
+	local new_path = string.gsub(file.path, file.name, suffix_replacement)
+	
+	if not vis:command(string.format("e %s", new_path)) then
+		info(whoami, "couldn't swap")
+	end
+
+	return true
+end)
+
 vis:command_register('godef', function (argv, force, win, selection, range)
 	if win.syntax ~= "go" then
 		info("godef", err_filetype)
