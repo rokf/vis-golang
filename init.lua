@@ -92,7 +92,7 @@ vis:command_register('godef', function (argv, force, win, selection, range)
 	if not path then
 		line, column, type_info = string.match(output, "([^:]+):([^:\n]+)\n(.+)")
 	else
-		if force then
+		if force and path ~= file.path then
 			vis:command(string.format("split %s", path))
 		end
 	end
