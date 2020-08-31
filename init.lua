@@ -57,8 +57,17 @@ vis:command_register('goswap', function (argv, force, win, selection, range)
 	end
 
 	local new_path = string.gsub(file.path, file.name, suffix_replacement)
+
+	-- check if new_path is already open in some window
+	for win in vis:windows() do
+		if win.file.path == new_path then
+			-- switch to the existing window
+			vis.win = win
+			return true
+		end
+	end
 	
-	if not vis:command(string.format("e %s", new_path)) then
+	if not vis:command(string.format("%s %s", force and "e" or "split", new_path)) then
 		info(whoami, "couldn't swap")
 	end
 
