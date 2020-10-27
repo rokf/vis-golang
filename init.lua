@@ -16,16 +16,19 @@ vis:command_register('gout', function (argv, force, win, selection, range)
 	
 	for i=1, #lines do
 		if string.match(lines[i], "type ") or string.match(lines[i], "func ") then
-			table.insert(matching, string.format("%d: %s", i, lines[i]))
+			table.insert(matching, string.format("%-5d %s", i, lines[i]))
 		end
 	end
 
-	local fzf = io.popen(string.format("echo '%s' | fzf", table.concat(matching, "\n")))
+	local fzf = io.popen(string.format(
+		"echo '%s' | fzf --no-sort --tac",
+		table.concat(matching, "\n")
+	))
 	local out = fzf:read()
 	local success, msg, status = fzf:close()
 
 	if status == 0 then
-		local line_number = string.match(out, "^(%d+):")
+		local line_number = string.match(out, "^(%d+)%s+")
 		if line_number ~= nil then
 			selection:to(line_number, 1)
 		end

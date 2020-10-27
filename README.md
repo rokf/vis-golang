@@ -19,7 +19,7 @@ The third feature is `go test` integration. A `gotest` command has been added th
 
 `gotest` looks for a `GOTEST_FLAGS` environment variable at runtime. If it is present then it appends its content to the end of the `go test` command (useful together with `direnv` for example).
 
-The fourth feature is a `gout` command (go outline). It opens `fzf` with a list of lines containing type or function definitions of the current file. When an entry is chosen the cursor appears on the line of its definition.
+The fourth feature is a `gout` command (go outline). It opens `fzf` with a list of lines containing type or function definitions of the current file. When an entry is chosen the cursor jumps to its location. If you're looking for the same experience but don't want to be limited to Go I suggest you take a look at [vis-fzf-outline](https://github.com/rokf/vis-fzf-outline).
 
 The fifth feature is a `goswap` command which swaps the currently open file with its counterpart (test/implementation). Lets say that you're working on a file named `abc.go`, `goswap` will try to open `abc_test.go` in a split window and vice versa. If forced (with `!` suffix) it will replace the file in the current window instead of splitting. In case that the counterpart is already open in one of the other unfocused windows the focus will move to it.
 
