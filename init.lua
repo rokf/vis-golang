@@ -59,7 +59,8 @@ vis:command_register('goswap', function (argv, force, win, selection, range)
 		suffix_replacement = string.sub(file.name, 1, -4) .. "_test.go"
 	end
 
-	local new_path = string.gsub(file.path, file.name, suffix_replacement)
+	local ind1 = file.path:find(file.name, 1, true)
+	local new_path = file.path:sub(1, ind1 - 1) .. suffix_replacement
 
 	-- check if new_path is already open in some window
 	for win in vis:windows() do
@@ -69,7 +70,7 @@ vis:command_register('goswap', function (argv, force, win, selection, range)
 			return true
 		end
 	end
-	
+
 	if not vis:command(string.format("%s %s", force and "e" or "split", new_path)) then
 		info(whoami, "couldn't swap")
 	end
