@@ -1,27 +1,35 @@
 # vis-golang
 
-A Go plugin for the [Vis](https://github.com/martanne/vis) editor.
+A [Go](https://golang.org/) plugin for the [Vis](https://github.com/martanne/vis) editor.
 
 Inspired by [vis-go](https://gitlab.com/timoha/vis-go) but with a slightly different set of features.
 
-## Features
+## Commands
 
-It contains a `godef` command. It displays type information of the symbol at the current cursor location in the info line (bottom).
+### `godef[!]`
 
-If forced (with `!` suffix) it will also open the source file and position the cursor at the definition in a `split` window.
+Displays type information of the symbol at the current cursor position in the info line (bottom). **If forced** it will open the source file and position the cursor at the definition in a separate window.
 
-The second feature is formatter integration. There are `gofmt` and `goimports` commands that replace the current range with its formatted version. If forced (with `!` suffix) they'll try writing to the file at the end (execute `w`).
+### `gofmt[!]` and `goimports[!]`
+
+The current range is replaced with its formatted version. **If forced** the changes will be written to disk.
 
 - `gofmt` runs with the `-s` (simplify code) flag
-- `goimports` `-local` flag can be set through a `GOIMPORTS_LOCAL` environment variable
+- `goimports`'s `-local` flag can be set through a `GOIMPORTS_LOCAL` environment variable
 
-The third feature is `go test` integration. A `gotest` command has been added that runs the package tests in the package that the current active file is located in. In case of failure a no-name buffer with the report content will be opened.
+### `gotest`
 
-`gotest` looks for a `GOTEST_FLAGS` environment variable at runtime. If it is present then it appends its content to the end of the `go test` command (useful together with `direnv` for example).
+Runs `go test` for the currently active file's package. In case of failure a window with the output is opened.
 
-The fourth feature is a `gout` command (go outline). It opens `fzf` with a list of lines containing type or function definitions of the current file. When an entry is chosen the cursor jumps to its location. If you're looking for the same experience but don't want to be limited to Go I suggest you take a look at [vis-fzf-outline](https://github.com/rokf/vis-fzf-outline).
+It looks for a `GOTEST_FLAGS` environment variable at runtime. If it's present then it appends its content to the end of the `go test` command (useful together with `direnv` for example).
 
-The fifth feature is a `goswap` command which swaps the currently open file with its counterpart (test/implementation). Lets say that you're working on a file named `abc.go`, `goswap` will try to open `abc_test.go` in a split window and vice versa. If forced (with `!` suffix) it will replace the file in the current window instead of splitting. In case that the counterpart is already open in one of the other unfocused windows the focus will move to it.
+### `gout`
+
+Opens `fzf` with a list of lines containing type or function definitions (outline) of the current file. When an entry is chosen the cursor jumps to its location. If you're looking for the same experience but don't want to be limited to Go I suggest you take a look at [vis-fzf-outline](https://github.com/rokf/vis-fzf-outline).
+
+### `goswap[!]`
+
+Swaps the currently open file with its testing related counterpart (test/implementation). Let's say that you're working on a file named `abc.go`, `goswap` will try to open `abc_test.go` in a split window. **If forced** it will replace the file in the currently active window instead of splitting. In case that the counterpart is already open in one of the other unfocused windows the focus will move to it.
 
 ## Installation
 
