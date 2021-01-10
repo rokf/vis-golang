@@ -37,9 +37,14 @@ vis:command_register('gout', function (argv, force, win, selection, range)
 	end
 end)
 
+-- is the existing layout vertical or horizontal
+local is_vertical = function (width, height)
+	return width > height * 2
+end
+
 -- decide whether to split window vertically or horizontally
 local split_or_vsplit = function (width, height)
-	if width > height * 2 then
+	if is_vertical(width, height) then
 		return "vsplit"
 	end
 
@@ -211,6 +216,21 @@ vis:command_register('gotest', function (argv, force, win, selection, range)
 
 	local flags = os.getenv("GOTEST_FLAGS") or ""
 
+	if force then
+		if selection.pos == nil then
+			info("gotest", "invalid selection state")
+			return true
+		end
+		
+		local content = win.file:content(win.file:text_object_word(selection.pos))
+		if string.match(content, "^Test") then
+			flags = string.format("%s -run %s", flags, content)
+		else
+			info("gotest", "word at cursor is not an exported test identifier")
+			return true
+		end
+	end
+
 	local package_path = string.format("./%s", string.sub(win.file.name, 1, found_at))
 
 	local command = string.format("go test %s %s 2>&1", package_path, flags)
@@ -222,7 +242,7 @@ vis:command_register('gotest', function (argv, force, win, selection, range)
 	if status ~= 0 then
 		info("gotest","'%s' (status %d) FAILED", command, status)
 
-		if not vis:command("new") then
+		if not vis:command(is_vertical(win.width, win.height) and "vnew" or "new") then
 			info("gotest","failed opening empty buffer")
 			return true
 		end
@@ -238,4 +258,3 @@ vis:command_register('gotest', function (argv, force, win, selection, range)
 		
 	return true
 end)
-

@@ -17,11 +17,13 @@ The current range is replaced with its formatted version. **If forced** the chan
 - `gofmt` runs with the `-s` (simplify code) flag
 - `goimports`'s `-local` flag can be set through a `GOIMPORTS_LOCAL` environment variable
 
-### `gotest`
+### `gotest[!]`
 
-Runs `go test` for the currently active file's package. In case of failure a window with the output is opened.
+Runs `go test` for the currently active file's package. In case of failure a window with the output is opened. The current window layout will be respected.
 
 It looks for a `GOTEST_FLAGS` environment variable at runtime. If it's present then it appends its content to the end of the `go test` command (useful together with `direnv` for example).
+
+**If forced** only the test under the current cursor possition will be executed. The cursor has to be located on a word matching the `^Test` pattern.
 
 ### `gout`
 
