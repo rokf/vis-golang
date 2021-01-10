@@ -1,8 +1,8 @@
+local err_filetype = "file is not a go file"
+
 local info = function (cmd, fmt, ...)
 	vis:info(string.format("vis-golang: [%s] %s", cmd, string.format(fmt, ...)))
 end
-
-local err_filetype = "file is not a go file"
 
 vis:command_register('gout', function (argv, force, win, selection, range)
 	if win.syntax ~= "go" then
@@ -37,6 +37,27 @@ vis:command_register('gout', function (argv, force, win, selection, range)
 	end
 end)
 
+-- decide whether to split window vertically or horizontally
+local split_or_vsplit = function (width, height)
+	if width > height * 2 then
+		return "vsplit"
+	end
+
+	return "split"
+end
+
+-- check if the file path is already open in some window
+-- and return the relevant window or nil
+local path_window = function (path)
+	for w in vis:windows() do
+		if w.file.path == path then
+			return w
+		end
+	end
+
+	return nil
+end
+
 vis:command_register('goswap', function (argv, force, win, selection, range)
 	local whoami = "goswap"
 	
@@ -62,16 +83,13 @@ vis:command_register('goswap', function (argv, force, win, selection, range)
 	local ind1 = file.path:find(file.name, 1, true)
 	local new_path = file.path:sub(1, ind1 - 1) .. suffix_replacement
 
-	-- check if new_path is already open in some window
-	for win in vis:windows() do
-		if win.file.path == new_path then
-			-- switch to the existing window
-			vis.win = win
-			return true
-		end
+	local w = path_window(new_path)
+	if w then
+		vis.win = w
+		return true
 	end
 
-	if not vis:command(string.format("%s %s", force and "e" or "split", new_path)) then
+	if not vis:command(string.format("%s %s", force and "e" or split_or_vsplit(win.width, win.height), new_path)) then
 		info(whoami, "couldn't swap")
 	end
 
@@ -105,15 +123,21 @@ vis:command_register('godef', function (argv, force, win, selection, range)
 	if not path then
 		line, column, type_info = string.match(output, "([^:]+):([^:\n]+)\n(.+)")
 	else
-		if force and path ~= file.path then
-			vis:command(string.format("split %s", path))
+		if force and string.find(file.path, path) == nil then
+			local w = path_window(path)
+			if w then
+				vis.win = w
+				return true
+			end
+			
+			vis:command(string.format("%s %s", split_or_vsplit(win.width, win.height), path))
 		end
 	end
 
-	info("godef", type_info)
-
 	if force then
 		vis.win.selection:to(line, column)
+	else
+		info("godef", type_info)
 	end
 
 	return true

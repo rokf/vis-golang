@@ -8,7 +8,7 @@ Inspired by [vis-go](https://gitlab.com/timoha/vis-go) but with a slightly diffe
 
 ### `godef[!]`
 
-Displays type information of the symbol at the current cursor position in the info line (bottom). **If forced** it will open the source file and position the cursor at the definition in a separate window.
+Displays type information of the symbol at the current cursor position in the info line (bottom). **If forced** it will open the source file and position the cursor at the definition in a separate window with respect to the current window layout.
 
 ### `gofmt[!]` and `goimports[!]`
 
@@ -29,7 +29,7 @@ Opens `fzf` with a list of lines containing type or function definitions (outlin
 
 ### `goswap[!]`
 
-Swaps the currently open file with its testing related counterpart (test/implementation). Let's say that you're working on a file named `abc.go`, `goswap` will try to open `abc_test.go` in a split window. **If forced** it will replace the file in the currently active window instead of splitting. In case that the counterpart is already open in one of the other unfocused windows the focus will move to it.
+Swaps the currently open file with its testing related counterpart (test/implementation). Let's say that you're working on a file named `abc.go`, `goswap` will try to open `abc_test.go` in a split window. **If forced** it will replace the file in the currently active window instead of splitting. In case that the counterpart is already open in one of the other unfocused windows the focus will move to it. The current window layout should be respected.
 
 ## Installation
 
