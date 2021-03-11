@@ -126,16 +126,18 @@ vis:command_register('godef', function (argv, force, win, selection, range)
 	local path, line, column, type_info = string.match(output, "([^:]+):([^:]+):([^:\n]+)\n(.+)")
 
 	if not path then
+		-- the output doesn't contain the file path, it's relative
 		line, column, type_info = string.match(output, "([^:]+):([^:\n]+)\n(.+)")
 	else
-		if force and string.find(file.path, path) == nil then
-			local w = path_window(path)
-			if w then
-				vis.win = w
-				return true
+		if force and string.find(file.path, path, 1, true) == nil then
+			-- path is not the current file.path, the symbol is defined in a different file
+			local existing_window = path_window(path)
+			if existing_window then
+				-- the window with the definition is already open, switch to it
+				vis.win = existing_window
+			else
+				vis:command(string.format("%s %s", split_or_vsplit(win.width, win.height), path))
 			end
-			
-			vis:command(string.format("%s %s", split_or_vsplit(win.width, win.height), path))
 		end
 	end
 
