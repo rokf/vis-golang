@@ -8,11 +8,11 @@ Inspired by [vis-go](https://gitlab.com/timoha/vis-go) but with a slightly diffe
 
 ### `godef[!]`
 
-Displays type information of the symbol at the current cursor position in the info line (bottom). **If forced** it will open the source file and position the cursor at the definition in a separate window with respect to the current window layout.
+Displays type information of the symbol at the current cursor position in the info line (bottom). **If forced**, it will open the source file and position the cursor at the definition with respect to the current window layout.
 
 ### `gofmt[!]` and `goimports[!]`
 
-The current range is replaced with its formatted version. **If forced** the changes will be written to disk.
+The current range is replaced with its formatted version. **If forced**, the changes will be written to disk.
 
 - `gofmt` runs with the `-s` (simplify code) flag
 - `goimports`'s `-local` flag can be set through a `GOIMPORTS_LOCAL` environment variable
@@ -23,7 +23,7 @@ Runs `go test` for the currently active file's package. In case of failure a win
 
 It looks for a `GOTEST_FLAGS` environment variable at runtime. If it's present then it appends its content to the end of the `go test` command (useful together with `direnv` for example).
 
-**If forced** only the test under the current cursor possition will be executed. The cursor has to be located on a word matching the `^Test` pattern.
+**If forced**, only the test under the current cursor possition will be executed. The cursor has to be located on a word matching the `^Test` pattern.
 
 ### `gout`
 
@@ -31,7 +31,7 @@ Opens `fzf` with a list of lines containing type or function definitions (outlin
 
 ### `goswap[!]`
 
-Swaps the currently open file with its testing related counterpart (test/implementation). Let's say that you're working on a file named `abc.go`, `goswap` will try to open `abc_test.go` in a split window. **If forced** it will replace the file in the currently active window instead of splitting. In case that the counterpart is already open in one of the other unfocused windows the focus will move to it. The current window layout should be respected.
+Swaps the currently open file with its testing related counterpart (test/implementation). Let's say that you're working on a file named `abc.go`, `goswap` will try to open `abc_test.go` in a split window. **If forced**, it will replace the file in the currently active window instead of splitting. In case that the counterpart is already open in one of the other unfocused windows the focus will move to it. The current window layout should be respected.
 
 ## Installation
 
